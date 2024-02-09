@@ -1,11 +1,15 @@
 import idautils
 import idc
+import ida_segment
 
 current_function_start = idc.get_func_attr(idc.here(), idc.FUNCATTR_START)
 
 for instr in idautils.FuncItems(current_function_start):
     for ref in idautils.CodeRefsFrom(instr, False):
-        func_name = idc.get_func_name(ref)
-        
-        if func_name and idc.get_func_attr(ref, idc.FUNCATTR_START) != current_function_start:
-            print("참조된 함수: {}".format(func_name))
+        seg = ida_segment.getseg(ref)
+        if seg and seg.type == ida_segment.SEG_DATA:
+            func_addr = idc.get_qword(ref)
+            if func_addr:
+                func_name = idc.get_func_name(func_addr)
+                if func_name:
+                    print("간접 호출된 함수: {}".format(func_name))
