@@ -106,3 +106,7 @@ for check in my_list:
 func_resolve_dict = get_specific_func_resolve(filtered_func)
 my_list = [sub_list for sub_list in func_resolve_dict if not any(item in banlist for item in sub_list)]
 print(my_list)
+
+
+#get = get_func_calls("?put_AuthData@SignInContext@Internal@System@Windows@@UEAAJPEAUHSTRING__@@@Z")
+#print(func_resolve_dict)
