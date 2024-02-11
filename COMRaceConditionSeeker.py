@@ -162,4 +162,17 @@ for filt in filtered_func_name_addr:
     if cfunc:
         arg = cfunc.arguments[0]
         filt.append(arg.type().dstr())
-    print(filt)
+
+categorized_list = {}
+for item in filtered_func_name_addr:
+    category = item[-1]
+    if category not in categorized_list:
+        categorized_list[category] = []
+    categorized_list[category].append(item)
+
+
+for category, items in categorized_list.items():
+    print(f"Category: {category}")
+    for item in items:
+        print(f"  - {item}")
+    print()
