@@ -166,6 +166,7 @@ for filt in filtered_func_name_addr:
 categorized_list = {}
 for item in filtered_func_name_addr:
     category = item[-1]
+    item[2] = list(dict.fromkeys(item[2]))
     if category not in categorized_list:
         categorized_list[category] = []
     categorized_list[category].append(item)
