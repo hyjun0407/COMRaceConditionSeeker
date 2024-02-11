@@ -145,7 +145,7 @@ for check in my_list:
                 filtered_func.append(check)
 
 func_resolve_dict = get_specific_func_resolve(filtered_func)
-my_list = [sub_list for sub_list in func_resolve_dict if not any(item in banlist for item in sub_list)]
+my_list = [sub_list for sub_list in func_resolve_dict if any(item in banlist for item in sub_list)]
 only_all_func = get_all_func()
 filtered_func_name_addr = []
 for get in only_all_func:
@@ -166,7 +166,10 @@ for filt in filtered_func_name_addr:
 categorized_list = {}
 for item in filtered_func_name_addr:
     category = item[-1]
-    item[2] = list(dict.fromkeys(item[2]))
+    ref_string = list(dict.fromkeys(item[2]))
+    converted_numbers = [int(x, 16) if 'x' in x else int(x) for x in ref_string]
+    sorted_numbers = sorted(converted_numbers)
+    item[2] = sorted_numbers
     if category not in categorized_list:
         categorized_list[category] = []
     categorized_list[category].append(item)
