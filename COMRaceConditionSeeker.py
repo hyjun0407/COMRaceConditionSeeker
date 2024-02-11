@@ -2,10 +2,54 @@ import idautils
 import idc
 import ida_name
 import ida_hexrays
+import ida_funcs
+import re
+
 func_resolve_dict = []
-banlist = ['__imp_AcquireSRWLockExclusive', '__imp_ReleaseSRWLockShared', '__imp_InitializeSRWLock','__imp_TryAcquireSRWLockShared','__imp_ReleaseSRWLockExclusive','__imp_AcquireSRWLockExclusive','__imp_TryAcquireSRWLockExclusive','__imp_AcquireSRWLockShared','__imp_TryAcquireSRWLockShared','__imp_EnterCriticalSection','__imp_LeaveCriticalSection',]
+banlist = ['__imp__Mtx_unlock',' __imp__Mtx_lock','__imp_AcquireSRWLockExclusive', '__imp_ReleaseSRWLockShared', '__imp_InitializeSRWLock','__imp_TryAcquireSRWLockShared','__imp_ReleaseSRWLockExclusive','__imp_AcquireSRWLockExclusive','__imp_TryAcquireSRWLockExclusive','__imp_AcquireSRWLockShared','__imp_TryAcquireSRWLockShared','__imp_EnterCriticalSection','__imp_LeaveCriticalSection']
 # 모듈 내의 모든 함수를 순회합니다.
 
+
+def get_function_pseudocode(ea):
+    # Hex-Rays Decompiler가 사용 가능한지 확인
+    if not ida_hexrays.init_hexrays_plugin():
+        print("Hex-Rays Decompiler is not available.")
+        return None
+
+    # 주어진 주소에서 함수를 찾음
+    f = ida_funcs.get_func(ea)
+    if not f:
+        print("Function not found at the given address.")
+        return None
+
+    # 함수를 디컴파일
+    cfunc = ida_hexrays.decompile(f.start_ea)
+    if not cfunc:
+        print("Failed to decompile function.")
+        return None
+
+    # 디컴파일된 함수의 pseudocode를 문자열로 변환
+    pseudocode = str(cfunc)
+    return pseudocode
+
+def get_this_pseudo(code_snippet):
+    pattern_corrected = r"this \+ (0x[0-9a-fA-F]+|\d+)"
+    matches_corrected = re.findall(pattern_corrected, code_snippet)
+    return matches_corrected
+
+def get_this_xref(function_name):
+    function_start = idc.get_name_ea_simple(function_name)
+    function_end = idc.find_func_end(function_start)
+    # 함수 내에서 'rcx' 레지스터를 사용하는 모든 명령어를 찾습니다.
+    for head in idautils.Heads(function_start, function_end):
+        a = idc.generate_disasm_line(head, 0)
+        start_index = a.find("[rcx")
+        end_index = a.find("]", start_index) + 1 # ']'의 위치를 찾음
+        # '['와 ']' 사이의 문자열 추출
+        substring = a[start_index:end_index]
+        if(start_index != -1):
+            print(substring)
+    
 def get_all_func_resolve():
     func_dict = []
     for func in idautils.Functions():
@@ -25,7 +69,6 @@ def get_all_func_resolve():
                 # 참조된 주소가 현재 분석 중인 함수의 범위 외부에 있고, `.idata` 세그먼트에 있으면 외부 함수로 간주합니다.
                 if ref_func_name and seg_name == '.idata':
                     func_dict.append(['out',current_function_name,ref_func_name,instr])
-                        #print("{} 함수에서 외부 함수 참조: {}".format(current_function_name, ref_func_name))
                 # 참조된 주소가 현재 분석 중인 함수의 범위 외부에 있지만, `.idata` 세그먼트에는 없는 경우, 내부 함수로 간주합니다.
                 elif ref_func_name and idc.get_func_attr(ref, idc.FUNCATTR_START) != current_function_start:
                     func_dict.append(['in',current_function_name,ref_func_name,instr])
@@ -100,13 +143,23 @@ for check in my_list:
         for arg in cfunc.arguments:
             if(arg.name == "this"):
                 filtered_func.append(check)
-                
-
 
 func_resolve_dict = get_specific_func_resolve(filtered_func)
-my_list = [sub_list for sub_list in func_resolve_dict if not any(item in banlist for item in sub_list)]
-print(my_list)
-
-
-#get = get_func_calls("?put_AuthData@SignInContext@Internal@System@Windows@@UEAAJPEAUHSTRING__@@@Z")
-#print(func_resolve_dict)
+my_list = [sub_list for sub_list in func_resolve_dict if any(item in banlist for item in sub_list)]
+only_all_func = get_all_func()
+filtered_func_name_addr = []
+for get in only_all_func:
+    for checklist in my_list:
+        if(checklist[1] == get[0]):
+            filtered_func_name_addr.append(get)
+            break
+for filt in filtered_func_name_addr:
+    dec = get_function_pseudocode(filt[1])
+    pseduo = get_this_pseudo(dec)
+    filt.append(pseduo)
+    func_ea = idc.get_name_ea_simple(filt[0])
+    cfunc = ida_hexrays.decompile(func_ea)
+    if cfunc:
+        arg = cfunc.arguments[0]
+        filt.append(arg.type().dstr())
+    print(filt)
