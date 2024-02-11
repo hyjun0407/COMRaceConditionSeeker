@@ -145,7 +145,7 @@ for check in my_list:
                 filtered_func.append(check)
 
 func_resolve_dict = get_specific_func_resolve(filtered_func)
-my_list = [sub_list for sub_list in func_resolve_dict if any(item in banlist for item in sub_list)]
+my_list = [sub_list for sub_list in func_resolve_dict if not any(item in banlist for item in sub_list)]
 only_all_func = get_all_func()
 filtered_func_name_addr = []
 for get in only_all_func:
