@@ -1,4 +1,4 @@
-#What is ComRaceConditionSeeker?
+# What is ComRaceConditionSeeker?
 The Component Object Model (COM) is a software architecture developed by Microsoft that enables various software components to communicate and exchange data with each other. It is widely used in the Windows operating system and enables developers to build applications from modular components. COM is designed to be language-independent, which means that components written in different programming languages can interact with each other.
 
 The key concepts of COM are based on the principles of object-oriented programming, which promote the reusability and maintainability of software components through the separation of interface and implementation. COM objects can only be accessed through defined interfaces, which are identified by a unique identifier, the Global Unique Identifier (GUID).
@@ -14,11 +14,11 @@ candidate functions that do not have a lock, and identifies the shared resources
 
 We can Reproduce CVE-2020-1394/1146/1211 successfully with ComRaceConditionSeeker, and I am glad to find new race-conditionable function with ComRaceConditionSeeker.
 
-#How-To-Use
+# How-To-Use
 Simple. Just execute this script on IDA
 just check what "LOCK" related Function that target binary using and add it to banlist if there aren't exist.
 
-#Example Output
+# Example Output
 ```python
 Category: Windows::System::UserStatics *
   - ['?GetNonRoamableIdForUserAndApp@UserStatics@System@Windows@@UEAAJPEAUIUser@23@PEAUHSTRING__@@PEAPEAU5@@Z', 6442468736, [18, 72, 144], 'Windows::System::UserStatics *']
