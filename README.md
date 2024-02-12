@@ -17,6 +17,8 @@ We can Reproduce CVE-2020-1394/1146/1211 successfully with ComRaceConditionSeeke
 # How-To-Use
 Simple. Just execute this script on IDA
 just check what "LOCK" related Function that target binary using and add it to banlist if there aren't exist.
+['?GetNonRoamableIdForUserAndApp@UserStatics@System@Windows@@UEAAJPEAUIUser@23@PEAUHSTRING__@@PEAPEAU5@@Z', 6442468736, [18, 72, 144], 'Windows::System::UserStatics *']
+In the above structure, the first is the name of the function, the second is the offset of the reference to 'this' object, the third is the address of the function, and the fourth is the structure information of 'this' structure..
 
 # Example Output
 ```python
