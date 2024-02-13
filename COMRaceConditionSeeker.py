@@ -145,7 +145,16 @@ for check in my_list:
                 filtered_func.append(check)
 
 func_resolve_dict = get_specific_func_resolve(filtered_func)
-my_list = [sub_list for sub_list in func_resolve_dict if not any(item in banlist for item in sub_list)]
+
+# banlist에 포함된 세 번째 원소를 가진 항목들의 두 번째 요소 찾기
+to_remove = set()
+for item in func_resolve_dict:
+    if item[2] in banlist:
+        to_remove.add(item[1])
+
+# 두 번째 요소가 to_remove에 포함된 모든 항목들을 삭제
+my_list = [item for item in func_resolve_dict if item[1] not in to_remove]
+
 only_all_func = get_all_func()
 filtered_func_name_addr = []
 for get in only_all_func:
