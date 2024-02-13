@@ -12,7 +12,7 @@ ComRaceConditionSeeker helps you quickly screen these COMs for candidate functio
 Therefore, ComRaceConditionSeeker (henceforth CRSeeker) is designed to find candidate functions in the DLL where the actual implementation of COM takes place.
 candidate functions that do not have a lock, and identifies the shared resources referenced by those functions ('this' object with the same structure), so that the user can find the function with the faster race condition potential.
 
-We can Reproduce CVE-2020-1394/1146/1211 successfully with ComRaceConditionSeeker, and I am hope to find new race-conditionable function with ComRaceConditionSeeker.
+We can Reproduce CVE-2020-1394/1146/1211 successfully with ComRaceConditionSeeker, and I am glad to find 2 new race-conditionable functions with ComRaceConditionSeeker.
 
 # How-To-Use
 Simple. Just execute this script on IDA
