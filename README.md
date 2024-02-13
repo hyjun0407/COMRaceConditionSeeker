@@ -20,7 +20,7 @@ just check what "LOCK" related Function that target binary using and add it to b
 ```python
 ['?GetNonRoamableIdForUserAndApp@UserStatics@System@Windows@@UEAAJPEAUIUser@23@PEAUHSTRING__@@PEAPEAU5@@Z', 6442468736, [18, 72, 144], 'Windows::System::UserStatics *']
 ```
-In the above structure, the first is the name of the function, the second is the offset of the reference to 'this' object, the third is the address of the function, and the fourth is the structure information of 'this' structure..
+In the above structure, the first is the name of the function, the second is the address of the function,the third is the offset of the reference to 'this' object and the fourth is the structure information of 'this' structure.
 
 # Example Output
 ```python
